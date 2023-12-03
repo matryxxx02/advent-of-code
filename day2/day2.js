@@ -10,6 +10,11 @@ const inputExample = "Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green\n" 
     "Game 4: 1 green, 3 red, 6 blue; 3 green, 6 red; 3 green, 15 blue, 14 red\n" +
     "Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green"
 
+const extractNumbers = (value) => {
+    const regex = /\d+/g
+    return value.match(regex)[0]
+}
+
 function countPossibleGames(input) {
     const cubesMax = {
         red: 12,
@@ -17,10 +22,6 @@ function countPossibleGames(input) {
         blue: 14,
     }
 
-    const extractNumbers = (value) => {
-        const regex = /\d+/g
-        return value.match(regex)[0]
-    }
 
     const gameIsPossible = (value) => {
         const cubesCount = {
@@ -65,4 +66,38 @@ function countPossibleGames(input) {
     }), 0)
 }
 
-console.log(countPossibleGames(input))
+// console.log(countPossibleGames(input))
+
+function countSetsPower(input) {
+
+    const getGamePower = (line) => {
+        const cubesCount = {
+            red: 0,
+            green: 0,
+            blue: 0,
+        }
+
+        Object.keys(cubesCount).forEach(cubeColor => {
+            const colorRegex = new RegExp(`\\b(\\d+\\s+${cubeColor})\\b`, 'g');
+            const cubeValues = line.match(colorRegex) //["3 green", 2 green"]
+
+            if(cubeValues && cubeValues.length > 0) {
+                cubesCount[cubeColor] = Math.max(...cubeValues.map(val => Number(extractNumbers(val))))
+            }
+        })
+
+        return cubesCount.red * cubesCount.green * cubesCount.blue
+    }
+
+    const lines = input.split("\n")
+    return lines.reduce(((acc, line) => {
+        const splitedLine = line.split(':')
+        const set = splitedLine[1]
+        const gamePower = getGamePower(set)
+        console.log(`GamePwer ${gamePower} `)
+
+        return acc + gamePower;
+    }), 0)
+}
+
+console.log(countSetsPower(input))
