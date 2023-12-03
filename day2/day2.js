@@ -22,7 +22,6 @@ function countPossibleGames(input) {
         blue: 14,
     }
 
-
     const gameIsPossible = (value) => {
         const cubesCount = {
             red: 0,
