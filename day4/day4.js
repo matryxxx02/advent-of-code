@@ -24,9 +24,30 @@ function sumOfPoints(input){
             return accNumber
         },[])
 
-        if(foundNumber.length > 0) return acc + Math.pow(2,foundNumber.length-1) // ??
+        if(foundNumber.length > 0) return acc + Math.pow(2,foundNumber.length-1)
         return acc
     },0)
 }
 
-console.log(sumOfPoints(input))
+// console.log(sumOfPoints(input))
+
+function sumOfCards(input){
+    const lines = input.split("\n").map(line => line.split(':')[1])
+    const cards = lines.reduce((acc, line, indexCard) => {
+        const numberGames = line.split('|')
+        const winningsNumbers = extractNumbers(numberGames[0])
+        const numbers = extractNumbers(numberGames[1])
+
+        const foundNumber = winningsNumbers.reduce((accNumber,winningNumber) => {
+            if(numbers.includes(winningNumber)) accNumber.push(winningNumber)
+            return accNumber
+        },[])
+
+        console.log({foundNumber, acc, ex:[...acc, ...foundNumber.map((val, idx) => (idx + indexCard + 2))]})
+
+        if(foundNumber.length > 0) return [...acc, ...foundNumber.map((val,idx)=>(idx+indexCard+1))]
+        return acc
+    },[])
+}
+
+console.log(sumOfCards(inputExample))
