@@ -19,15 +19,18 @@ function getCourses(input) {
 
 function getCoursesPart2(input) {
     const lines = input.split('\n')
-    const times = [extractNumbers(lines[0].split(':')[1]).join('')]
-    const distances = [extractNumbers(lines[1].split(':')[1]).join('')]
+    const times = [Number(extractNumbers(lines[0].split(':')[1]).join(''))]
+    const distances = [Number(extractNumbers(lines[1].split(':')[1]).join(''))]
 
     return times.map((time, index) => ({time, distance: distances[index]}))
 }
 
 function waysNumberToBeatRecord(input) {
+    console.time('parser')
     // const courses = getCourses(input)
     const courses = getCoursesPart2(input)
+    console.timeEnd('parser')
+    console.log(courses)
     const waysNumber = []
 
     for (const {time, distance} of courses) {
