@@ -8,10 +8,9 @@ const inputExample = "32T3K 765\n" +
     "QQQJA 483"
 
 const cards = {
-    'A': 12,
-    'K': 11,
-    'Q': 10,
-    'J': 9,
+    'A': 11,
+    'K': 10,
+    'Q': 9,
     'T': 8,
     '9': 7,
     '8': 6,
@@ -21,6 +20,7 @@ const cards = {
     '4': 2,
     '3': 1,
     '2': 0,
+    'J': 0,
 }
 
 const strenght = {
@@ -40,12 +40,30 @@ function getHands (input) {
         const cards = hand.split('')
         const cardOccurrences = {};
         cards.forEach((card) => {
-            cardOccurrences[card] = (cardOccurrences[card] || 0) + 1;
+            if(card !== 'J') {
+                cardOccurrences[card] = (cardOccurrences[card] || 0) + 1;
+            }
         });
+
+        if(cards.includes('J')){
+            const nbJoker = cards.filter(char => char === 'J').length
+            if(nbJoker === 5) {
+                cardOccurrences['J'] = 5
+            } else {
+                let cardMaxVal = null
+                for (let cle in cardOccurrences){
+                    cardOccurrences[cle] >= (cardOccurrences[cardMaxVal] || 0) && (cardMaxVal = cle)
+                }
+                console.log(cardMaxVal)
+                cardOccurrences[cardMaxVal] = cardOccurrences[cardMaxVal] +nbJoker;
+
+            }
+        }
 
         const strengthHandArray= Object.values(cardOccurrences).sort((a, b) => a - b).join();
         let strengthHand = 0
 
+        console.log(strengthHandArray)
         switch(strengthHandArray) {
             case strenght.highCard:
                 strengthHand = 0
@@ -71,7 +89,10 @@ function getHands (input) {
             default:
                 throw new Error("Invalid strength")
         }
-
+        // if(cards.filter(char => char === 'J').length === 1 && strengthHand !== 1) strengthHand +=2
+        // else if(cards.includes('J')) strengthHand += cards.filter(char => char === 'J').length
+        if(strengthHand > 6) strengthHand = 6
+        console.log({hand, bid, strengthHand})
         return {hand, bid, strengthHand}
     })
 }
@@ -85,6 +106,8 @@ function sortHands(handA, handB){
             const valueA = cards[cardsA[i]];
             const valueB = cards[cardsB[i]];
 
+            if(valueA === 'J' || valueB === 'J')
+                return valueA === 'J' ? 11- valueB : 11 - valueA
             if (valueA !== valueB) {
                 return valueA - valueB;
             }
@@ -105,3 +128,9 @@ function getTotalWining(input) {
 }
 
 console.log(getTotalWining(input))
+// 247080147
+// 247078497
+// 246920916
+// 247850951
+// too low
+// 247889481
