@@ -32,11 +32,44 @@ function countStepsToZZZ(input) {
         currentKey = map[currentKey][instruction];
         steps++;
 
-        if(currentKey === 'ZZZ') break
     }
 
     return steps
 
 }
 
-console.log(countStepsToZZZ(input))
+// console.log(countStepsToZZZ(input))
+
+const inputP2 = readInputFile('./inputPart2.txt')
+const inputExampleP2 = "LR\n" +
+    "\n" +
+    "11A = (11B, XXX)\n" +
+    "11B = (XXX, 11Z)\n" +
+    "11Z = (11B, XXX)\n" +
+    "22A = (22B, XXX)\n" +
+    "22B = (22C, 22C)\n" +
+    "22C = (22Z, 22Z)\n" +
+    "22Z = (22B, 22B)\n" +
+    "XXX = (XXX, XXX)"
+
+function countStepsToZZZPart2(input) {
+    const {instructions, map} = getMapAndInstruction(input)
+    let steps = 0
+    let currentKeys = Object.keys(map).filter(key => key.includes('A'))
+
+    console.log({currentKeys})
+
+    while(currentKeys.filter(key => key.endsWith("Z")).length !== currentKeys.length) {
+        const instruction = instructions[steps % instructions.length];
+
+        currentKeys = currentKeys.map(key => (map[key][instruction]))
+        console.log({currentKeys})
+        steps++;
+
+    }
+
+    return steps
+
+}
+
+console.log(countStepsToZZZPart2(inputP2))
