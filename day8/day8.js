@@ -52,6 +52,22 @@ const inputExampleP2 = "LR\n" +
     "22Z = (22B, 22B)\n" +
     "XXX = (XXX, XXX)"
 
+function countStepsToGoal(start, instructions, map) {
+    let steps = 0
+    let currentKey = start
+
+    while(!currentKey.endsWith('Z')) {
+        const instruction = instructions[steps % instructions.length];
+        currentKey = map[currentKey][instruction];
+        steps++;
+
+    }
+
+    return steps
+
+}
+
+//brut force try
 function countStepsToZZZPart2(input) {
     const {instructions, map} = getMapAndInstruction(input)
     let steps = 0
@@ -69,7 +85,33 @@ function countStepsToZZZPart2(input) {
     }
 
     return steps
-
 }
 
-console.log(countStepsToZZZPart2(inputP2))
+// WTF THANKS REDDIT
+// LCM =  PPCM
+// https://www.cuemath.com/numbers/lcm-least-common-multiple/
+function lcm(numbers) {
+    function gcd(a, b) {
+        if (b === 0) {
+            return a;
+        }
+        return gcd(b, a % b);
+    }
+
+    return numbers.reduce((a, b) => a * b / gcd(a, b));
+}
+
+function part2(input) {
+    const {instructions, map} = getMapAndInstruction(input)
+    let currentKeys = Object.keys(map).filter(key => key.includes('A'))
+
+    let pathCycleLengths = [];
+    for(let i = 0; i < currentKeys.length; i++) {
+        let steps = countStepsToGoal(currentKeys[i], instructions, map);
+        pathCycleLengths.push(steps);
+    }
+
+    return lcm(pathCycleLengths);
+}
+
+console.log(part2(inputP2))
