@@ -19,18 +19,25 @@ function expandsEmptySpaces(input) {
     const emptyColumns = lines[0].split('').map((_, i) =>
         lines.every(line => line[i] === '.')
     );
-
+    const emptyRows= [];
     const expandsLines = []
 
     for (let line of lines) {
-        line.match(/^\.+$/) ? expandsLines.push(...Array(2).fill(line)) : expandsLines.push(line)
+        if(line.match(/^\.+$/)) {
+            expandsLines.push(line)
+            emptyRows.push(true)
+        } else {
+            expandsLines.push(line)
+            emptyRows.push(false)
+        }
     }
 
-    return expandsLines.map(line => {
+    const galaxies = expandsLines.map(line => {
         const newLine = []
         for(let [i, char] of line.split('').entries()) {
-            if (emptyColumns[i] && char !== '\n') newLine.push(...['.', char])
-            else if (char === '#') {
+            if (emptyColumns[i] && char !== '\n'){
+                newLine.push(char)
+            } else if (char === '#') {
                 newLine.push(++numbers)
             } else {
                 newLine.push(char)
@@ -38,6 +45,7 @@ function expandsEmptySpaces(input) {
         }
         return newLine
     });
+    return {galaxies, emptyColumns, emptyRows}
 }
 
 function calculateDistance(map) {
@@ -54,20 +62,22 @@ function calculateDistance(map) {
 }
 
 
-function shortestPathBetweenPairs(input) {
+function shortestPathBetweenPairs(input, expandBy) {
     const numbers= new Map()
-    const expandSpace = expandsEmptySpaces(input)
-    for (let i = 0; i < expandSpace.length; i++) {
-        for (let j = 0; j < expandSpace[i].length; j++) {
-            if (!isNaN(expandSpace[i][j])){
-                numbers.set(expandSpace[i][j], {row:i, col:j})
+    const {galaxies, emptyRows, emptyColumns} = expandsEmptySpaces(input)
+
+    for (let rowIdx = 0; rowIdx < galaxies.length; rowIdx++) {
+        for (let colIdx = 0; colIdx < galaxies[rowIdx].length; colIdx++) {
+            if (!isNaN(galaxies[rowIdx][colIdx])){
+                numbers.set(galaxies[rowIdx][colIdx], {
+                    row:rowIdx + emptyRows.filter((empty, idx) => empty && idx < rowIdx).length * expandBy,
+                    col:colIdx + emptyColumns.filter((empty, idx) => empty && idx < colIdx).length * expandBy
+                })
             }
         }
     }
-    const distMap = calculateDistance(numbers)
 
     return Object.values(calculateDistance(numbers)).reduce((acc, val) => acc+val,0)
 }
 
-console.log(shortestPathBetweenPairs(input))
-
+console.log(shortestPathBetweenPairs(input, 999999))
