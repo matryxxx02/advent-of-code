@@ -79,4 +79,4 @@ function countSteps(input) {
     return steps / 2
 }
 
-console.log(countSteps(input))
+console.log(countSteps(inputExample))
