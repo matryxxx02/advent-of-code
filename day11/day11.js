@@ -40,27 +40,12 @@ function expandsEmptySpaces(input) {
     });
 }
 
-const expandSpace = expandsEmptySpaces(inputExample)
-const numbers= new Map()
-
-for (let i = 0; i < expandSpace.length; i++) {
-    for (let j = 0; j < expandSpace[i].length; j++) {
-        if (!isNaN(expandSpace[i][j])){
-            numbers.set(expandSpace[i][j], {row:i, col:j})
-        }
-    }
-}
-
 function calculateDistance(map) {
     const distances = {};
-
     map.forEach((value1, key1) => {
         map.forEach((value2, key2) => {
-            if (key1 !== key2) {
-                const distance = Math.sqrt(
-                    Math.pow(value2.row - value1.row, 2) + Math.pow(value2.col - value1.col, 2)
-                );
-                distances[`${key1}-${key2}`] = distance;
+            if (key1 < key2) {
+                distances[`${key1}-${key2}`] = (Math.abs(value2.col-value1.col)) + Math.abs(value2.row-value1.row)
             }
         });
     });
@@ -68,7 +53,21 @@ function calculateDistance(map) {
     return distances;
 }
 
-console.log(numbers)
 
-console.log(calculateDistance(numbers))
+function shortestPathBetweenPairs(input) {
+    const numbers= new Map()
+    const expandSpace = expandsEmptySpaces(input)
+    for (let i = 0; i < expandSpace.length; i++) {
+        for (let j = 0; j < expandSpace[i].length; j++) {
+            if (!isNaN(expandSpace[i][j])){
+                numbers.set(expandSpace[i][j], {row:i, col:j})
+            }
+        }
+    }
+    const distMap = calculateDistance(numbers)
+
+    return Object.values(calculateDistance(numbers)).reduce((acc, val) => acc+val,0)
+}
+
+console.log(shortestPathBetweenPairs(input))
 
